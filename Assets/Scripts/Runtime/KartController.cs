@@ -15,6 +15,11 @@ namespace Runtime
         public float steerAngleMax;
 
         [Space]
+        public float counterFlipTorqueStart;
+        public float counterFlipTorqueIncrease;
+        public float currentCounterFlipTorque;
+        
+        [Space]
         public float currentSpeed;
         [Range(-1f, 1f)]
         public float currentThrottle;
@@ -32,6 +37,8 @@ namespace Runtime
         private int wheelsOnGround;
 
         private WheelCollider[] wheels;
+
+        public Vector3 lastGroundDirection = Vector3.up;
         
         public Rigidbody body { get; private set; }
         public float signedForwardSpeed { get; private set; }
@@ -79,8 +86,10 @@ namespace Runtime
             {
                 body.linearVelocity -= Vector3.Project(body.linearVelocity, transform.forward);
             }
-            
+
+            LookForGround();
             ApplyThrottle();
+            ApplyCounterFlipForce();
 
             wheelsOnGround = 0;
             foreach (var wheel in wheels)
@@ -91,6 +100,38 @@ namespace Runtime
             }
             
             currentSpeed = Mathf.Round(signedForwardSpeed * 3.6f);
+        }
+
+        private void ApplyCounterFlipForce()
+        {
+            if (wheelsOnGround < 3)
+            {
+                currentCounterFlipTorque += counterFlipTorqueIncrease * Time.deltaTime;
+                var torque = Vector3.Cross(transform.up, lastGroundDirection) * currentCounterFlipTorque;
+                body.AddTorque(torque, ForceMode.Acceleration);
+            }
+            else
+            {
+                currentCounterFlipTorque = counterFlipTorqueStart;
+            }
+        }
+
+        private void LookForGround()
+        {
+            var average = Vector3.zero;
+            var wheelCount = 0;
+            for (var i = 0; i < wheels.Length; i++)
+            {
+                var wheel = wheels[i];
+                if (wheel.onGround)
+                {
+                    average += wheel.groundHit.normal;
+                    wheelCount++;
+                }
+            }
+
+            if (wheelCount == 0) return;
+            lastGroundDirection = average.normalized;
         }
 
         private void ApplyThrottle()
@@ -129,6 +170,7 @@ namespace Runtime
                 angularVelocity = body.angularVelocity,
                 currentThrottle = currentThrottle,
                 currentSteering = currentSteering,
+                currentCounterFlipTorque = currentCounterFlipTorque,
             };
             ReconcileState(data);
         }
@@ -143,6 +185,8 @@ namespace Runtime
 
             currentThrottle = data.currentThrottle;
             currentSteering = data.currentSteering;
+
+            currentCounterFlipTorque = data.currentCounterFlipTorque;
         }
 
         private void OnDrawGizmosSelected()
@@ -184,6 +228,8 @@ namespace Runtime
             
             public float currentThrottle;
             public float currentSteering;
+            
+            public float currentCounterFlipTorque;
             
             private uint tick;
             public void Dispose() { }

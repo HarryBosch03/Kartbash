@@ -17,7 +17,7 @@ namespace Runtime
         public float slip;
 
         private Rigidbody body;
-        private RaycastHit groundHit;
+        public RaycastHit groundHit { get; private set; }
         public float rpm { get; private set; }
 
         public float steerAngle { get; set; }
@@ -31,14 +31,16 @@ namespace Runtime
         public void Simulate()
         {
             var ray = new Ray(transform.position, -transform.up);
-            onGround = Physics.Raycast(ray, out groundHit, radius);
+            onGround = Physics.Raycast(ray, out var hit, radius);
             if (onGround)
             {
+                groundHit = hit;
+                
                 var position = ray.GetPoint(radius);
                 var velocity = body.GetPointVelocity(position);
 
                 var circumference = radius * Mathf.PI * 2f;
-                rpm = Vector3.Dot(velocity, transform.forward) / circumference;
+                rpm = Vector3.Dot(velocity, transform.forward) / circumference * 60f;
                 
                 ApplySteering();
                 ApplyTangentialForce();

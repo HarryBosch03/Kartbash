@@ -6,21 +6,18 @@ namespace Runtime
     public class WheelAnimator : MonoBehaviour
     {
         public Transform visuals;
-        
-        private WheelCollider vehicleWheel;
+
+        private WheelCollider wheel;
         private float rotation;
 
-        private void Awake()
-        {
-            vehicleWheel = GetComponent<WheelCollider>();
-        }
+        private void Awake() { wheel = GetComponent<WheelCollider>(); }
 
-        private void Update()
+        private void LateUpdate()
         {
-            rotation += vehicleWheel.rpm * 6f * Time.deltaTime;
+            rotation += wheel.rpm * 6f * Time.deltaTime;
             rotation %= 360f;
-            
-            visuals.localRotation = Quaternion.Euler(rotation, vehicleWheel.canSteer ? vehicleWheel.steerAngle : 0f, 0f);
+
+            visuals.localRotation = Quaternion.Euler(rotation, wheel.canSteer ? wheel.steerAngle : 0f, 0f);
         }
     }
 }
