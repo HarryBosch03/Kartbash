@@ -1,31 +1,40 @@
-using Unity.Cinemachine;
+using System;
 using UnityEngine;
 
 namespace Runtime.Cameras
 {
-    [DefaultExecutionOrder(50)]
+    [DefaultExecutionOrder(500)]
     public class KartCamera : MonoBehaviour
     {
         public KartController kart;
-        public CinemachineMixingCamera mixingCam;
-        public float blendTime;
+        public Transform visuals;
+        public Vector3 offset;
+        public float damping = 1f;
 
-        private float blendPercent;
+        private Vector3 dampedPosition;
+        private Camera mainCamera;
         
         private void Awake()
         {
-            transform.SetParent(null);
-            name = $"[{kart.name}] {name}";
+            mainCamera = Camera.main;
         }
 
         private void FixedUpdate()
         {
-            blendPercent = Mathf.MoveTowards(blendPercent, kart.onGround ? 0f : 1f,  Time.deltaTime / Mathf.Max(blendTime, Time.deltaTime));
-            var t = Smootherstep(blendPercent);
-            mixingCam.SetWeight(0, 1f - t);
-            mixingCam.SetWeight(1, t);
+            dampedPosition = Vector3.Lerp(dampedPosition, visuals.TransformPoint(offset), Time.deltaTime / Mathf.Max(Time.deltaTime, damping));
+            transform.position = dampedPosition;
+            transform.rotation = visuals.rotation;
         }
-        
+
+        private void LateUpdate()
+        {
+            if (kart.activeViewer)
+            {
+                mainCamera.transform.position = transform.position;
+                mainCamera.transform.rotation = transform.rotation;
+            }
+        }
+
         private static float Smootherstep(float x) => x * x * x * (x * (6.0f * x - 15.0f) + 10.0f);
     }
 }

@@ -1,7 +1,6 @@
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
-using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Runtime
@@ -30,14 +29,13 @@ namespace Runtime
         [Range(0f, 1f)]
         public float braking;
 
-        private CinemachineCamera cam;
         private int wheelsOnGround;
 
         private WheelCollider[] wheels;
         
         public Rigidbody body { get; private set; }
         public float signedForwardSpeed { get; private set; }
-        public bool activeViewer { get => cam.enabled; set => cam.enabled = value; }
+        public bool activeViewer { get; set; }
         public float maxForwardSpeed => maxForwardSpeedKmpH / 3.6f;
         public float maxReverseSpeed => maxReverseSpeedKmpH / 3.6f;
         public bool onGround => wheelsOnGround >= wheels.Length - 1;
@@ -45,7 +43,6 @@ namespace Runtime
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
-            cam = GetComponentInChildren<CinemachineCamera>();
 
             wheels = GetComponentsInChildren<WheelCollider>();
         }
