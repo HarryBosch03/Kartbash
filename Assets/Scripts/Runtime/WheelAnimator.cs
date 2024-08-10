@@ -7,20 +7,20 @@ namespace Runtime
     {
         public Transform visuals;
         
-        private WheelCollider wheel;
+        private WheelCollider vehicleWheel;
         private float rotation;
 
         private void Awake()
         {
-            wheel = GetComponent<WheelCollider>();
+            vehicleWheel = GetComponent<WheelCollider>();
         }
 
         private void Update()
         {
-            rotation += wheel.rpm * 6f * Time.deltaTime;
+            rotation += vehicleWheel.rpm * 6f * Time.deltaTime;
             rotation %= 360f;
             
-            visuals.localRotation = Quaternion.Euler(rotation, wheel.canSteer ? wheel.steerAngle : 0f, 0f);
+            visuals.localRotation = Quaternion.Euler(rotation, vehicleWheel.canSteer ? vehicleWheel.steerAngle : 0f, 0f);
         }
     }
 }

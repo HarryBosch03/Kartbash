@@ -1,9 +1,10 @@
-using System;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Runtime.Cameras
 {
-    [DefaultExecutionOrder(500)]
+    [DefaultExecutionOrder(50)]
+    [RequireComponent(typeof(CinemachineCamera))]
     public class KartCamera : MonoBehaviour
     {
         public KartController kart;
@@ -11,30 +12,21 @@ namespace Runtime.Cameras
         public Vector3 offset;
         public float damping = 1f;
 
+        private CinemachineCamera cam;
         private Vector3 dampedPosition;
-        private Camera mainCamera;
-        
+        private Vector3 localOffset;
+
         private void Awake()
         {
-            mainCamera = Camera.main;
-        }
-
-        private void FixedUpdate()
-        {
-            dampedPosition = Vector3.Lerp(dampedPosition, visuals.TransformPoint(offset), Time.deltaTime / Mathf.Max(Time.deltaTime, damping));
-            transform.position = dampedPosition;
-            transform.rotation = visuals.rotation;
+            cam = GetComponent<CinemachineCamera>();
         }
 
         private void LateUpdate()
         {
-            if (kart.activeViewer)
-            {
-                mainCamera.transform.position = transform.position;
-                mainCamera.transform.rotation = transform.rotation;
-            }
+            dampedPosition = Vector3.Lerp(dampedPosition, visuals.TransformPoint(offset), Time.deltaTime / Mathf.Max(Time.deltaTime, damping));
+            transform.position = dampedPosition;
+            transform.rotation = visuals.rotation;
+            cam.enabled = kart.activeViewer;
         }
-
-        private static float Smootherstep(float x) => x * x * x * (x * (6.0f * x - 15.0f) + 10.0f);
     }
 }

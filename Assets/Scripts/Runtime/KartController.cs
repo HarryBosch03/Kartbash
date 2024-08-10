@@ -13,7 +13,7 @@ namespace Runtime
         public float accelerationTime;
         public float steerAngleMin;
         public float steerAngleMax;
-        
+
         [Space]
         public float currentSpeed;
         [Range(-1f, 1f)]
@@ -43,7 +43,6 @@ namespace Runtime
         private void Awake()
         {
             body = GetComponent<Rigidbody>();
-
             wheels = GetComponentsInChildren<WheelCollider>();
         }
 

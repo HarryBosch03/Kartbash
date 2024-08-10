@@ -22,7 +22,11 @@ namespace Runtime
 
         public float steerAngle { get; set; }
 
-        private void Awake() { body = GetComponentInParent<Rigidbody>(); }
+        private void Awake()
+        {
+            body = GetComponentInParent<Rigidbody>(); 
+            transform.SetParent(body.transform);
+        }
 
         public void Simulate()
         {
