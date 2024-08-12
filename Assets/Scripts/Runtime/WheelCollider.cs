@@ -19,7 +19,8 @@ namespace Runtime
         private Rigidbody body;
         public RaycastHit groundHit { get; private set; }
         public float rpm { get; private set; }
-
+        public bool forceSlip { get; set; }
+        
         public float steerAngle { get; set; }
 
         private void Awake()
@@ -56,7 +57,7 @@ namespace Runtime
 
             var velocity = body.GetPointVelocity(groundHit.point);
             var tangentSpeed = Vector3.Dot(transform.right, velocity);
-            slip = Mathf.Abs(tangentSpeed / (velocity - Vector3.Project(velocity, transform.up)).magnitude);
+            slip = forceSlip ? 1f : Mathf.Abs(tangentSpeed / (velocity - Vector3.Project(velocity, transform.up)).magnitude);
             var friction = tangentialFrictionCurve.Evaluate(slip);
             var deltaVelocity = Vector3.Project(-body.GetPointVelocity(groundHit.point), transform.right) * Mathf.Min(friction, 1f);
             

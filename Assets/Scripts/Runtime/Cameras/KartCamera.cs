@@ -29,7 +29,7 @@ namespace Runtime.Cameras
         {
             dampedPosition = Vector3.Lerp(dampedPosition, visuals.TransformPoint(offset), Time.deltaTime / Mathf.Max(Time.deltaTime, damping));
             transform.position = dampedPosition;
-            transform.rotation = visuals.rotation;
+            transform.rotation = Quaternion.LookRotation((visuals.forward + kart.body.linearVelocity * 0.0f).normalized, visuals.up);
             cam.enabled = kart.activeViewer;
 
             var rd = Mathf.PerlinNoise1D(Time.time * cameraShakeFrequency);

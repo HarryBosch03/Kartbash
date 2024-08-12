@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class NetOverlay : MonoBehaviour
 {
+    public string address = "127.0.0.1";
+    
     private void Update()
     {
         var serverManager = InstanceFinder.ServerManager;
@@ -19,7 +21,7 @@ public class NetOverlay : MonoBehaviour
         
         if (!clientManager.Started && kb.cKey.wasPressedThisFrame)
         {
-            clientManager.StartConnection();
+            clientManager.StartConnection(address);
         }
     }
 

@@ -75,7 +75,25 @@ namespace Runtime
         [Replicate]
         private void Simulate(ReplicateData data, ReplicateState state = ReplicateState.Invalid, Channel channel = Channel.Unreliable)
         {
-            data.targetThrottle = Mathf.Lerp(data.targetThrottle, -Mathf.Clamp(signedForwardSpeed, -1f, 1f), data.braking);
+            if (!IsOwner)
+            {
+                targetThrottle = data.targetThrottle;
+                targetSteering = data.targetSteering;
+                braking = data.braking;
+            }
+            
+            var forceSlip = false;
+            if (data.braking > 0.1f)
+            {
+                if (data.targetThrottle < 0.1f)
+                {
+                    data.targetThrottle = Mathf.Lerp(data.targetThrottle, -Mathf.Clamp(signedForwardSpeed, -1f, 1f), data.braking);
+                }
+                else
+                {
+                    forceSlip = true;
+                }
+            }
             
             currentThrottle = Mathf.MoveTowards(currentThrottle, data.targetThrottle, throttleSpeed * Time.fixedDeltaTime);
             currentSteering = Mathf.MoveTowards(currentSteering, data.targetSteering, steeringSpeed * Time.fixedDeltaTime);
@@ -94,7 +112,8 @@ namespace Runtime
             wheelsOnGround = 0;
             foreach (var wheel in wheels)
             {
-                wheel.steerAngle = currentSteering * Mathf.Lerp(steerAngleMin, steerAngleMax, Mathf.Abs(signedForwardSpeed / maxForwardSpeed));
+                wheel.steerAngle = currentSteering * Mathf.Lerp(steerAngleMin, steerAngleMax, forceSlip ? 0f : Mathf.Abs(signedForwardSpeed / maxForwardSpeed));
+                wheel.forceSlip = forceSlip;
                 wheel.Simulate();
                 if (wheel.onGround) wheelsOnGround++;
             }

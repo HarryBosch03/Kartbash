@@ -1,15 +1,16 @@
+using FishNet.Object;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Runtime
 {
-    public class PlayerKartController : MonoBehaviour
+    public class PlayerKartController : NetworkBehaviour
     {
         public KartController kart;
 
         private void Update()
         {
-            if (kart != null)
+            if (kart != null && IsOwner)
             {
                 var kb = Keyboard.current;
 

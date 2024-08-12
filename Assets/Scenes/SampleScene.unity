@@ -775,6 +775,7 @@ GameObject:
   - component: {fileID: 979840472}
   - component: {fileID: 979840475}
   - component: {fileID: 979840476}
+  - component: {fileID: 979840477}
   m_Layer: 0
   m_Name: NetManager
   m_TagString: Untagged
@@ -862,6 +863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d453dbbf7ae56e84098f2a9e1f4ea4fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  address: 127.0.0.1
 --- !u!114 &979840476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -877,11 +879,27 @@ MonoBehaviour:
   Transport: {fileID: 0}
   _intermediateLayer: {fileID: 0}
   _latencySimulator:
-    _enabled: 1
-    _simulateHost: 1
-    _latency: 80
+    _enabled: 0
+    _simulateHost: 0
+    _latency: 0
     _outOfOrder: 0
     _packetLoss: 0
+--- !u!114 &979840477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979840470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e08bb003fce297d4086cf8cba5aa459a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dropExcessiveReplicates: 1
+  _maximumServerReplicates: 15
+  _stateInterpolation: 2
+  _stateOrder: 1
 --- !u!1001 &1106055736
 PrefabInstance:
   m_ObjectHideFlags: 0
