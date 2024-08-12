@@ -197,6 +197,8 @@ namespace Runtime
         [Reconcile]
         private void ReconcileState(ReconcileData data, Channel channel = Channel.Unreliable)
         {
+            if (data.GetTick() != TimeManager.Tick) Debug.LogWarning($"Received Funny Reconciliation Data, Data Recieved has tick of {data.GetTick()}, TimeManager is at tick {TimeManager.Tick}");
+            
             body.transform.position = data.position;
             body.transform.rotation = data.rotation;
             body.linearVelocity = data.linearVelocity;

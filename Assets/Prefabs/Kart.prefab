@@ -206,6 +206,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93df0e3524f6baf4fae69bc5c566f4ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 1363994449644120652}
+  _networkObjectCache: {fileID: 1363994449644120652}
   kart: {fileID: 3746637286116538694}
 --- !u!114 &1363994449644120652
 MonoBehaviour:
@@ -224,6 +227,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 3746637286116538694}
+  - {fileID: 7519581140404726699}
   <SerializedRootNetworkBehaviour>k__BackingField: {fileID: 0}
   <NestedRootNetworkBehaviours>k__BackingField: []
   SerializedTransformProperties:

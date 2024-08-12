@@ -898,7 +898,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dropExcessiveReplicates: 1
   _maximumServerReplicates: 15
-  _stateInterpolation: 2
+  _stateInterpolation: 1
   _stateOrder: 1
 --- !u!1001 &1106055736
 PrefabInstance:
