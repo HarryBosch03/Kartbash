@@ -1,5 +1,6 @@
 using System;
 using FishNet;
+using Runtime.Karts;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +11,10 @@ namespace Runtime.Testing
         public float height = 1f;
         public float force = 10f;
         public AnimationCurve tangentialFrictionCurve;
-        public float averageSlip;
-        public float averageSlipTime;
+        [Range(0, 100)]
+        public int slip;
         public KartController trackedKart;
 
-        private float slipAccumulator;
-        private float slipTimer;
         private bool reset;
         
         private void Start()
@@ -31,12 +30,9 @@ namespace Runtime.Testing
                 reset = false;
                 
                 trackedKart = FindFirstObjectByType<KartController>();
-                var input = trackedKart.GetComponent<PlayerKartController>();
+                var input = trackedKart.GetComponent<KartInput>();
 
-                foreach (var wheel in trackedKart.GetComponentsInChildren<WheelCollider>())
-                {
-                    wheel.tangentialFrictionCurve = tangentialFrictionCurve;
-                }
+                trackedKart.tangentFriction = tangentialFrictionCurve;
                 
                 input.enabled = false;
 
@@ -49,20 +45,7 @@ namespace Runtime.Testing
             
             if (trackedKart)
             {
-                var avgSlip = 0f;
-                var wheels = trackedKart.GetComponentsInChildren<WheelCollider>();
-                foreach (var wheel in wheels)
-                {
-                    avgSlip += wheel.slip / wheels.Length;
-                }
-                slipAccumulator += avgSlip * Time.deltaTime;
-                if (slipTimer > averageSlipTime)
-                {
-                    averageSlip = slipAccumulator / averageSlipTime;
-                    slipAccumulator = 0f;
-                    slipTimer = 0f;
-                }
-                slipTimer += Time.deltaTime;
+                slip = Mathf.RoundToInt(trackedKart.slip * 100);
             }
         }
 
@@ -71,6 +54,10 @@ namespace Runtime.Testing
             if (Keyboard.current.tKey.wasPressedThisFrame)
             {
                 reset = true;
+            }
+            if (trackedKart != null && Keyboard.current.yKey.wasPressedThisFrame)
+            {
+                trackedKart.GetComponent<KartInput>().enabled = true;
             }
         }
     }

@@ -18,7 +18,7 @@ namespace Runtime.Tools
         private Vector2 rotation;
         private float moveSpeed;
 
-        private Eddy.Message speedMessage;
+        private Toasts.Message speedMessage;
         
         private void Awake()
         {
@@ -28,7 +28,7 @@ namespace Runtime.Tools
         private void OnEnable()
         {
             moveSpeed = startMoveSpeed;
-            speedMessage = new Eddy.Message();
+            speedMessage = new Toasts.Message();
 
             cam.enabled = false;
         }
@@ -41,7 +41,7 @@ namespace Runtime.Tools
                 {
                     cam.enabled = false;
                     Cursor.lockState = CursorLockMode.None;
-                    Eddy.ShowMessage("Disabled Free Cam");
+                    Toasts.ShowMessage("Disabled Free Cam");
                 }
                 else
                 {
@@ -50,7 +50,7 @@ namespace Runtime.Tools
                     var brain = CinemachineBrain.GetActiveBrain(0);
                     cam.transform.position = brain.transform.position;
                     cam.transform.rotation = brain.transform.rotation;
-                    Eddy.ShowMessage("Enabled Free Cam");
+                    Toasts.ShowMessage("Enabled Free Cam");
                 }
             }
 
