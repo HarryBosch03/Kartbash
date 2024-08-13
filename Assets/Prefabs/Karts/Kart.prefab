@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20bb6e25f29a45cf9ae59f0b33e7aa36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 2
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 1363994449644120652}
   _networkObjectCache: {fileID: 1363994449644120652}
   visibility: 0
@@ -132,7 +132,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3901154141395420773}
+  m_Father: {fileID: 2551188347131525339}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6088896190938311180
 MonoBehaviour:
@@ -198,7 +198,6 @@ MonoBehaviour:
   cameraShakeFromSpeed: 0.8
   idleFov: 90
   maxSpeedFov: 110
-  teleportThreshold: 2
 --- !u!1 &781685287129608750
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,8 +306,9 @@ GameObject:
   - component: {fileID: 3494981635175419594}
   - component: {fileID: 3746637286116538694}
   - component: {fileID: 7519581140404726699}
-  - component: {fileID: 1363994449644120652}
   - component: {fileID: 3340879324353060107}
+  - component: {fileID: 1363994449644120652}
+  - component: {fileID: 6169380344772875096}
   m_Layer: 0
   m_Name: Kart
   m_TagString: Untagged
@@ -329,7 +329,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3901154141395420773}
+  - {fileID: 7055866997775716692}
   - {fileID: 1882122817364139904}
   - {fileID: 7267928527839613481}
   - {fileID: 5295733515777787034}
@@ -381,7 +381,8 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 1363994449644120652}
   maxForwardSpeedKmpH: 140
   maxReverseSpeedKmpH: 20
-  enginePower: 50
+  enginePower: 30
+  brakePower: 30
   steerAngleMin: 20
   steerAngleMax: 6
   accelerationCurve:
@@ -455,7 +456,7 @@ MonoBehaviour:
   jumpForce: 14
   checkForGroundRadius: {x: 1.13, y: 0.81, z: 2.31}
   checkForGroundOffset: {x: 0, y: 0.66, z: 0}
-  checkForGroundIterations: {x: 32, y: 16}
+  checkForGroundIterations: {x: 16, y: 8}
   currentCounterFlipTorque: 0
   jumpFx: {fileID: 6893871175129395075}
   sparks: {fileID: 6648618585977058629}
@@ -490,54 +491,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1363994449644120652}
   _networkObjectCache: {fileID: 1363994449644120652}
   kart: {fileID: 3746637286116538694}
---- !u!114 &1363994449644120652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2421836878390279062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <IsNested>k__BackingField: 0
-  <ComponentIndex>k__BackingField: 0
-  <PredictedSpawn>k__BackingField: {fileID: 0}
-  _networkBehaviours:
-  - {fileID: 3746637286116538694}
-  - {fileID: 7519581140404726699}
-  - {fileID: 55682375042452844}
-  <SerializedRootNetworkBehaviour>k__BackingField: {fileID: 0}
-  <NestedRootNetworkBehaviours>k__BackingField: []
-  SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 1}
-    LocalScale: {x: 1, y: 1, z: 1}
-  _isNetworked: 1
-  _isSpawnable: 1
-  _isGlobal: 0
-  _initializeOrder: 0
-  _defaultDespawnType: 0
-  NetworkObserver: {fileID: 0}
-  _enablePrediction: 1
-  _predictionType: 1
-  _graphicalObject: {fileID: 7267928527839613481}
-  _detachGraphicalObject: 1
-  _enableStateForwarding: 1
-  _networkTransform: {fileID: 0}
-  _ownerInterpolation: 2
-  _ownerSmoothedProperties: 3
-  _adaptiveInterpolation: 3
-  _spectatorSmoothedProperties: 3
-  _spectatorInterpolation: 2
-  _enableTeleport: 0
-  _teleportThreshold: 1
-  <PrefabId>k__BackingField: 0
-  <SpawnableCollectionId>k__BackingField: 0
-  <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 14766124980454626715
 --- !u!114 &3340879324353060107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -559,6 +512,75 @@ MonoBehaviour:
   sensitivity: -0.2
   framerate: 12
   displaySize: 0.05
+--- !u!114 &1363994449644120652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2421836878390279062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours:
+  - {fileID: 3746637286116538694}
+  - {fileID: 7519581140404726699}
+  - {fileID: 6169380344772875096}
+  - {fileID: 55682375042452844}
+  <SerializedRootNetworkBehaviour>k__BackingField: {fileID: 0}
+  <NestedRootNetworkBehaviours>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    LocalScale: {x: 1, y: 1, z: 1}
+  _isNetworked: 1
+  _isSpawnable: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 1
+  _predictionType: 1
+  _graphicalObject: {fileID: 7267928527839613481}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 3
+  _ownerSmoothedProperties: 3
+  _adaptiveInterpolation: 0
+  _spectatorSmoothedProperties: 3
+  _spectatorInterpolation: 1
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 14766124980454626715
+--- !u!114 &6169380344772875096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2421836878390279062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01a271dd97d875347b0cea860df29a9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 1363994449644120652}
+  _networkObjectCache: {fileID: 1363994449644120652}
+  _boundingBox: 0
+  _physicsType: 1
+  _boundingBoxSize: {x: 3, y: 3, z: 3}
+  _colliderParents:
+  - {fileID: 2510000097962660847}
 --- !u!1 &2510000097962660847
 GameObject:
   m_ObjectHideFlags: 0
@@ -1184,181 +1206,6 @@ MonoBehaviour:
   visuals: {fileID: 5387048690562946786}
   slipSmoke: {fileID: 5645985131940166149}
   slipThreshold: 0.325
---- !u!1 &8421924434656445160
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3901154141395420773}
-  - component: {fileID: 5370282116013092507}
-  m_Layer: 0
-  m_Name: Mixing Camera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3901154141395420773
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8421924434656445160}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7055866997775716692}
-  - {fileID: 4915150324986831096}
-  m_Father: {fileID: 2551188347131525339}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5370282116013092507
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8421924434656445160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c26251a3e1f5ac41afa5ffb404c5f71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Priority:
-    Enabled: 0
-    m_Value: 0
-  OutputChannel: 1
-  StandbyUpdate: 2
-  m_StreamingVersion: 20230301
-  m_LegacyPriority: 0
-  DefaultTarget:
-    Enabled: 0
-    Target:
-      TrackingTarget: {fileID: 0}
-      LookAtTarget: {fileID: 0}
-      CustomLookAtTarget: 0
-  DefaultBlend:
-    Style: 1
-    Time: 0.5
-    CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  CustomBlends: {fileID: 0}
-  Weight0: 1
-  Weight1: 0
-  Weight2: 0
-  Weight3: 0
-  Weight4: 0
-  Weight5: 0
-  Weight6: 0
-  Weight7: 0
---- !u!1 &9076068075621280945
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4915150324986831096}
-  - component: {fileID: 724766555899938883}
-  - component: {fileID: 4739025643806565846}
-  m_Layer: 0
-  m_Name: Orbit Camera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4915150324986831096
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9076068075621280945}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3901154141395420773}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &724766555899938883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9076068075621280945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Priority:
-    Enabled: 0
-    m_Value: 0
-  OutputChannel: 1
-  StandbyUpdate: 2
-  m_StreamingVersion: 20230301
-  m_LegacyPriority: 0
-  Target:
-    TrackingTarget: {fileID: 0}
-    LookAtTarget: {fileID: 0}
-    CustomLookAtTarget: 0
-  Lens:
-    FieldOfView: 90
-    OrthographicSize: 10
-    NearClipPlane: 0.1
-    FarClipPlane: 5000
-    Dutch: 0
-    ModeOverride: 0
-    PhysicalProperties:
-      GateFit: 2
-      SensorSize: {x: 21.946, y: 16.002}
-      LensShift: {x: 0, y: 0}
-      FocusDistance: 10
-      Iso: 200
-      ShutterSpeed: 0.005
-      Aperture: 16
-      BladeCount: 5
-      Curvature: {x: 2, y: 11}
-      BarrelClipping: 0.25
-      Anamorphism: 0
-  BlendHint: 0
---- !u!114 &4739025643806565846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9076068075621280945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d66dd1a7173747ada57190cc3c2aee32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kart: {fileID: 3746637286116538694}
-  visuals: {fileID: 7267928527839613481}
-  offset: {x: 0, y: 1.6, z: -3.5}
-  damping: 0.15
-  landTransitionDuration: 0.5
-  cameraShakeFrequency: 10
-  cameraShakeFromSpeed: 0.8
-  idleFov: 90
-  maxSpeedFov: 110
-  teleportThreshold: 2
 --- !u!1001 &1032820173479992550
 PrefabInstance:
   m_ObjectHideFlags: 0

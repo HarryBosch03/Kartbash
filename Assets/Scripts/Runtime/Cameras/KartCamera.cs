@@ -1,6 +1,3 @@
-using System;
-using FishNet;
-using FishNet.Managing.Timing;
 using Runtime.Karts;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -21,12 +18,8 @@ namespace Runtime.Cameras
         public float idleFov = 90f;
         public float maxSpeedFov = 110f;
 
-        [Space]
-        public float teleportThreshold = 2f;
-
         private CinemachineCamera cam;
         private Vector3 dampedPosition;
-        private Vector3 lastPosition;
         private Vector3 localOffset;
         
         private Quaternion orientation = Quaternion.identity;
@@ -37,26 +30,6 @@ namespace Runtime.Cameras
         private void Awake()
         {
             cam = GetComponent<CinemachineCamera>();
-        }
-
-        private void OnEnable()
-        {
-            InstanceFinder.TimeManager.OnTick += OnTick;
-        }
-
-        private void OnDisable()
-        {
-            if (InstanceFinder.TimeManager != null) InstanceFinder.TimeManager.OnTick -= OnTick;
-        }
-
-        private void OnTick()
-        {
-            if ((kart.body.position - lastPosition).magnitude > teleportThreshold)
-            {
-                dampedPosition = kart.body.position;
-                orientation = kart.body.rotation;
-            }
-            lastPosition = kart.body.position;
         }
 
         private void LateUpdate()

@@ -113,17 +113,6 @@ namespace Runtime.Karts
         [Replicate]
         private void Simulate(ReplicateData data, ReplicateState state = ReplicateState.Invalid, Channel channel = Channel.Unreliable)
         {
-            if (!IsOwner)
-            {
-                targetThrottle = data.targetThrottle;
-                targetSteering = data.targetSteering;
-                braking = data.braking;
-                airControl = data.airControl;
-                jump = data.jump;
-            }
-            
-            data.targetThrottle = Mathf.Lerp(data.targetThrottle, -Mathf.Clamp(signedForwardSpeed, -1f, 1f), data.braking);
-
             currentThrottle = Mathf.MoveTowards(currentThrottle, data.targetThrottle, throttleSpeed * Time.fixedDeltaTime);
             currentSteering = Mathf.MoveTowards(currentSteering, data.targetSteering, steeringSpeed * Time.fixedDeltaTime);
 
@@ -134,12 +123,12 @@ namespace Runtime.Karts
                 body.linearVelocity -= Vector3.Project(body.linearVelocity, transform.forward);
             }
 
-            CheckIfGrounded();
+            CheckIfGrounded(data);
             LookForGround();
-            ApplyThrottle();
+            ApplyThrottle(ref data);
             ApplyTangentFriction();
-            ApplyAirControl();
-            Jump(state == ReplicateState.CurrentCreated);
+            ApplyAirControl(data);
+            Jump(data, state == ReplicateState.CurrentCreated);
 
             groundedWheelsCount = 0;
             foreach (var wheel in wheels)
@@ -150,15 +139,14 @@ namespace Runtime.Karts
             }
 
             currentSpeed = Mathf.Round(signedForwardSpeed * 3.6f);
-            jump = false;
-            
+
             if (state == ReplicateState.CurrentCreated)
             {
-                brakeLights = braking > 0.1f;
+                brakeLights = data.braking > 0.1f;
             }
         }
 
-        private void CheckIfGrounded()
+        private void CheckIfGrounded(ReplicateData data)
         {
             var ix = checkForGroundIterations.x;
             var iy = checkForGroundIterations.y;
@@ -173,7 +161,7 @@ namespace Runtime.Karts
                     var vector = Vector3.Scale(Quaternion.Euler(ax, ay, 0f) * Vector3.forward, checkForGroundRadius);
                     var length = vector.magnitude;
                     vector = vector.normalized;
-                    if (Physics.Raycast(new Ray(center, (transform.rotation * vector)), out var hit, length))
+                    if (Physics.Raycast(new Ray(center, transform.rotation * vector), out var hit, length))
                     {
                         hits[x * iy + y] = hit;
                     }
@@ -202,19 +190,20 @@ namespace Runtime.Karts
             }
         }
 
-        private void Jump(bool current)
+        private void Jump(ReplicateData data, bool current)
         {
-            if (!onGround || !jump) return;
-
-            body.linearVelocity += (wheelsOnGround ? lastWheelGroundDirection : lastGroundDirection) * jumpForce;
-            if (current) jumpFx.Play(true);
+            if (onGround && data.jump)
+            {
+                body.linearVelocity += (wheelsOnGround ? lastWheelGroundDirection : lastGroundDirection) * jumpForce;
+                if (current) jumpFx.Play(true);
+            }
         }
 
-        private void ApplyAirControl()
+        private void ApplyAirControl(ReplicateData data)
         {
             if (wheelsOnGround) return;
 
-            var input = body.rotation * Vector3.ClampMagnitude(airControl, 1f);
+            var input = body.rotation * Vector3.ClampMagnitude(data.airControl, 1f);
             var torque = (input * airControlSpeed - body.angularVelocity) * airControlAcceleration;
             body.angularVelocity += torque * Time.fixedDeltaTime;
         }
@@ -231,11 +220,11 @@ namespace Runtime.Karts
                 if (point.z < min) min = point.z;
                 if (point.z > max) max = point.z;
             }
-            
+
             var sideSpeed = Mathf.Abs(Vector3.Dot(body.linearVelocity, transform.right));
             var forwardSpeed = Mathf.Abs(signedForwardSpeed);
             slip = sideSpeed + forwardSpeed > 0.1f ? sideSpeed / (sideSpeed + forwardSpeed) : 0f;
-            
+
             var distance = Mathf.Max(0f, max - min);
             ApplyTangentFriction(slip, distance * -0.5f, 0f, 0.5f);
 
@@ -278,29 +267,27 @@ namespace Runtime.Karts
             lastWheelGroundDirection = average.normalized;
         }
 
-        private void ApplyThrottle()
+        private void ApplyThrottle(ref ReplicateData data)
         {
             if (groundedWheelsCount < 2) return;
 
-            var maxSpeed = signedForwardSpeed > 0f ? maxForwardSpeed : maxReverseSpeed;
-            float force;
             if (currentThrottle * signedForwardSpeed < 0f && Mathf.Abs(signedForwardSpeed) > 5f)
             {
-                braking = 1f;
-                force = -Mathf.Sign(signedForwardSpeed) * brakePower;
+                data.braking = 1f;
             }
-            else
-            {
-                force = currentThrottle * accelerationCurve.Evaluate(Mathf.Abs(signedForwardSpeed) / maxSpeed) * enginePower;
-            }
-            body.linearVelocity += transform.forward * force * Time.deltaTime;
+
+            var maxSpeed = signedForwardSpeed > 0f ? maxForwardSpeed : maxReverseSpeed;
+            var throttleForce = currentThrottle * accelerationCurve.Evaluate(Mathf.Abs(signedForwardSpeed) / maxSpeed) * enginePower;
+            var brakeForce = MathHelper.ClosestToZero(-signedForwardSpeed / Time.fixedDeltaTime, -Mathf.Sign(signedForwardSpeed) * brakePower);
+            var force = Mathf.Lerp(throttleForce, brakeForce, data.braking);
+            body.linearVelocity += transform.forward * force * Time.fixedDeltaTime;
         }
 
         private ReplicateData CreateReplicationData()
         {
             if (!IsOwner) return default;
 
-            return new ReplicateData
+            var data = new ReplicateData
             {
                 targetThrottle = targetThrottle,
                 targetSteering = targetSteering,
@@ -308,6 +295,9 @@ namespace Runtime.Karts
                 airControl = airControl,
                 jump = jump,
             };
+
+            jump = false;
+            return data;
         }
 
         private void OnPostTick() { CreateReconcile(); }
@@ -379,7 +369,6 @@ namespace Runtime.Karts
                     sparks.Play();
                 }
             }
-
         }
 
         protected override void OnValidate()
