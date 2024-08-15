@@ -1,6 +1,7 @@
 using Runtime.Karts;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Runtime.Cameras
 {
@@ -17,10 +18,13 @@ namespace Runtime.Cameras
         public float cameraShakeFromSpeed = 2.5f;
         public float idleFov = 90f;
         public float maxSpeedFov = 110f;
+        public float mouseSensitivity = 0.3f;
 
         private CinemachineCamera cam;
         private Vector3 dampedPosition;
         private Vector3 localOffset;
+        private Vector2 rotation;
+        private bool freeCamEnabled;
         
         private Quaternion orientation = Quaternion.identity;
         private Quaternion lastOrientation = Quaternion.identity;
@@ -34,6 +38,24 @@ namespace Runtime.Cameras
 
         private void LateUpdate()
         {
+            var kb = Keyboard.current;
+            var m = Mouse.current;
+            if (kb.vKey.wasPressedThisFrame)
+            {
+                if (freeCamEnabled)
+                {
+                    freeCamEnabled = false;
+                    rotation = new Vector2(transform.eulerAngles.y, -transform.eulerAngles.x);
+                }
+                else freeCamEnabled = true;
+            }
+            if (freeCamEnabled)
+            {
+                rotation += m.delta.ReadValue() * mouseSensitivity;
+                rotation.x %= 360f;
+                rotation.y = Mathf.Clamp(rotation.y, -45f, 80f);
+            }
+            
             TranslateCamera();
             OrientCamera();
 
@@ -65,6 +87,12 @@ namespace Runtime.Cameras
 
         private void OrientCamera()
         {
+            if (freeCamEnabled)
+            {
+                transform.rotation = Quaternion.Euler(-rotation.y, rotation.x, 0f);
+                return;
+            }
+            
             var onGround = kart.wheelsOnGround;
             if (onGround)
             {   
